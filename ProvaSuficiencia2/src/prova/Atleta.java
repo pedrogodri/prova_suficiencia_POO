@@ -2,6 +2,7 @@ package prova;
 
 import java.io.Serializable;
 
+//PEDRO HENRIQUE GODRI
 public class Atleta implements Serializable, Comparable<Atleta> {
     private String nome;
     private String cpf;

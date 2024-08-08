@@ -1,5 +1,6 @@
 package model.viagem;
 
+//PEDRO HENRIQUE GODRI
 public class ViagemMunicipal extends Viagem {
     private static final int CAPACIDADE_MAXIMA = 65;
 

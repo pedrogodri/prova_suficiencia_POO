@@ -2,6 +2,7 @@ package prova;
 
 import java.io.Serializable;
 
+//PEDRO HENRIQUE GODRI
 public class Endereco implements Serializable {
     private String rua;
     private String numero;

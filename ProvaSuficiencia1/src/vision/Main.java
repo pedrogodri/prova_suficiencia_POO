@@ -1,11 +1,13 @@
 package vision;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.*;
 import model.empresa.Empresa;
 import model.passageiro.Passageiro;
 import model.passageiro.PassageiroEstudante;
@@ -15,30 +17,31 @@ import model.viagem.Viagem;
 import model.viagem.ViagemIntermunicipal;
 import model.viagem.ViagemMunicipal;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
+// PEDRO HENRIQUE GODRI
 public class Main extends JFrame {
     private Empresa empresa;
-
     private JComboBox<String> tipoViagemComboBox;
     private JTextField nomePassageiroField;
     private JTextField idadePassageiroField;
     private JComboBox<String> tipoPassageiroComboBox;
     private JComboBox<Viagem> viagemComboBox;
     private JTextArea outputArea;
+    private JTextField nomeMotoristaField;
+    private JTextField placaOnibusField;
+    private JTextField dataViagemField;
+    private JTextField escolaPassageiroField;
+    private JLabel labelEscola;
+    private JTextField rgPassageiroField;
+    private JLabel labelRg;
 
     public Main() {
         empresa = new Empresa();
         setTitle("Sistema de Passageiros");
-        setSize(728, 577);
+        setSize(728, 650); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setBounds(0, 0, 712, 310);
+        inputPanel.setBounds(0, 0, 712, 340);
         inputPanel.setLayout(null);
 
         JLabel label = new JLabel("Tipo de Viagem:");
@@ -56,83 +59,147 @@ public class Main extends JFrame {
                 adicionarViagem();
             }
         });
+        adicionarViagemButton.setForeground(Color.WHITE);
+        adicionarViagemButton.setBackground(new Color(0, 100, 0));
         inputPanel.add(adicionarViagemButton);
 
+        JLabel labelMotorista = new JLabel("Nome do Motorista:");
+        labelMotorista.setBounds(0, 60, 150, 23);
+        inputPanel.add(labelMotorista);
+        nomeMotoristaField = new JTextField();
+        nomeMotoristaField.setBounds(150, 60, 356, 23);
+        inputPanel.add(nomeMotoristaField);
+
+        JLabel labelPlaca = new JLabel("Placa do Ônibus:");
+        labelPlaca.setBounds(0, 84, 150, 23);
+        inputPanel.add(labelPlaca);
+        placaOnibusField = new JTextField();
+        placaOnibusField.setBounds(150, 84, 356, 23);
+        inputPanel.add(placaOnibusField);
+
+        JLabel labelData = new JLabel("Data da Viagem (dd/MM/yyyy):");
+        labelData.setBounds(0, 108, 200, 23);
+        inputPanel.add(labelData);
+        dataViagemField = new JTextField();
+        dataViagemField.setBounds(200, 108, 150, 23);
+        inputPanel.add(dataViagemField);
+
         JLabel label_2 = new JLabel("Nome do Passageiro:");
-        label_2.setBounds(0, 104, 356, 23);
+        label_2.setBounds(0, 138, 150, 23);
         inputPanel.add(label_2);
         nomePassageiroField = new JTextField();
-        nomePassageiroField.setBounds(356, 104, 356, 23);
+        nomePassageiroField.setBounds(150, 138, 356, 23);
         inputPanel.add(nomePassageiroField);
 
         JLabel label_3 = new JLabel("Idade do Passageiro:");
-        label_3.setBounds(0, 127, 356, 23);
+        label_3.setBounds(0, 162, 150, 23);
         inputPanel.add(label_3);
         idadePassageiroField = new JTextField();
-        idadePassageiroField.setBounds(356, 127, 356, 23);
+        idadePassageiroField.setBounds(150, 162, 150, 23);
         inputPanel.add(idadePassageiroField);
 
         JLabel label_4 = new JLabel("Tipo de Passageiro:");
-        label_4.setBounds(0, 150, 356, 23);
+        label_4.setBounds(0, 186, 150, 23);
         inputPanel.add(label_4);
         tipoPassageiroComboBox = new JComboBox<>(new String[]{"Regular", "Estudante", "Idoso"});
-        tipoPassageiroComboBox.setBounds(356, 150, 356, 23);
+        tipoPassageiroComboBox.setBounds(150, 186, 150, 23);
         inputPanel.add(tipoPassageiroComboBox);
 
+        labelEscola = new JLabel("Escola do Estudante:");
+        labelEscola.setBounds(0, 210, 150, 23);
+        inputPanel.add(labelEscola);
+
+        escolaPassageiroField = new JTextField();
+        escolaPassageiroField.setBounds(150, 210, 356, 23);
+        escolaPassageiroField.setVisible(false);
+        inputPanel.add(escolaPassageiroField);
+    
+        labelRg = new JLabel("RG do Idoso:");
+        labelRg.setBounds(0, 234, 150, 23);
+        inputPanel.add(labelRg);
+
+        rgPassageiroField = new JTextField();
+        rgPassageiroField.setBounds(150, 234, 356, 23);
+        rgPassageiroField.setVisible(false);
+        inputPanel.add(rgPassageiroField);
+
         JLabel label_5 = new JLabel("Viagem:");
-        label_5.setBounds(0, 173, 356, 23);
+        label_5.setBounds(0, 258, 150, 23);
         inputPanel.add(label_5);
         viagemComboBox = new JComboBox<>();
-        viagemComboBox.setBounds(356, 173, 356, 23);
+        viagemComboBox.setBounds(150, 258, 356, 23);
         inputPanel.add(viagemComboBox);
 
         JButton adicionarPassageiroButton = new JButton("Adicionar Passageiro");
-        adicionarPassageiroButton.setBounds(0, 207, 356, 23);
+        adicionarPassageiroButton.setBounds(0, 290, 228, 23);
         adicionarPassageiroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 adicionarPassageiro();
             }
         });
+        adicionarPassageiroButton.setForeground(Color.WHITE);
+        adicionarPassageiroButton.setBackground(new Color(0, 100, 0));
         inputPanel.add(adicionarPassageiroButton);
-        JLabel label_6 = new JLabel();
-        label_6.setBounds(356, 138, 356, 23);
-        inputPanel.add(label_6);
-        JLabel label_7 = new JLabel();
-        label_7.setBounds(356, 161, 356, 23);
-        inputPanel.add(label_7);
-        JLabel label_8 = new JLabel();
-        label_8.setBounds(356, 184, 356, 23);
-        inputPanel.add(label_8);
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(outputArea);
-        scrollPane.setBounds(0, 321, 712, 217);
+        scrollPane.setBounds(0, 340, 712, 217);
         getContentPane().setLayout(null);
-
         getContentPane().add(inputPanel);
-        
-                JButton calcularValorTotalButton = new JButton("Calcular Valor Total");
-                calcularValorTotalButton.setBounds(0, 261, 356, 23);
-                inputPanel.add(calcularValorTotalButton);
-                
-                        JButton listarPassageirosMaisIdososButton = new JButton("Listar Passageiros Mais Idosos");
-                        listarPassageirosMaisIdososButton.setBounds(0, 287, 356, 23);
-                        inputPanel.add(listarPassageirosMaisIdososButton);
-                        listarPassageirosMaisIdososButton.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                listarPassageirosMaisIdosos();
-                            }
-                        });
-                calcularValorTotalButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        calcularValorTotal();
-                    }
-                });
         getContentPane().add(scrollPane);
+
+        JButton calcularValorTotalButton = new JButton("Calcular Valor Total");
+        calcularValorTotalButton.setBounds(0, 315, 228, 23);
+        calcularValorTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcularValorTotal();
+            }
+        });
+        calcularValorTotalButton.setForeground(Color.WHITE);
+        calcularValorTotalButton.setBackground(Color.BLUE);
+        inputPanel.add(calcularValorTotalButton);
+
+        JButton listarPassageirosMaisIdososButton = new JButton("Listar Passageiros Mais Idosos");
+        listarPassageirosMaisIdososButton.setBounds(228, 315, 356, 23);
+        listarPassageirosMaisIdososButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listarPassageirosMaisIdosos();
+            }
+        });
+        listarPassageirosMaisIdososButton.setForeground(Color.WHITE);
+        listarPassageirosMaisIdososButton.setBackground(Color.BLUE);
+        inputPanel.add(listarPassageirosMaisIdososButton);
+
+        tipoPassageiroComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                atualizarCamposVisiveis();
+            }
+        });
+    }
+
+    private void atualizarCamposVisiveis() {
+        String tipoPassageiro = (String) tipoPassageiroComboBox.getSelectedItem();
+        if ("Estudante".equals(tipoPassageiro)) {
+            escolaPassageiroField.setVisible(true);
+            labelEscola.setVisible(true);
+            rgPassageiroField.setVisible(false);
+            labelRg.setVisible(false);
+        } else if ("Idoso".equals(tipoPassageiro)) {
+            escolaPassageiroField.setVisible(false);
+            labelEscola.setVisible(false);
+            rgPassageiroField.setVisible(true);
+            labelRg.setVisible(true);
+        } else {
+            escolaPassageiroField.setVisible(false);
+            labelEscola.setVisible(false);
+            rgPassageiroField.setVisible(false);
+            labelRg.setVisible(false);
+        }
     }
 
     private void adicionarViagem() {
@@ -143,6 +210,18 @@ public class Main extends JFrame {
         } else {
             viagem = new ViagemIntermunicipal();
         }
+
+        viagem.setNomeMotorista(nomeMotoristaField.getText());
+        viagem.setPlacaOnibus(placaOnibusField.getText());
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date dataViagem = sdf.parse(dataViagemField.getText());
+            viagem.setDataViagem(dataViagem);
+        } catch (ParseException ex) {
+            outputArea.append("Data inválida: " + ex.getMessage() + "\n");
+            return;
+        }
+
         empresa.adicionarViagem(viagem);
         viagemComboBox.addItem(viagem);
         outputArea.append("Viagem " + tipoViagem + " adicionada.\n");
@@ -158,14 +237,20 @@ public class Main extends JFrame {
             if ("Regular".equals(tipoPassageiro)) {
                 passageiro = new PassageiroRegular(nome, idade);
             } else if ("Estudante".equals(tipoPassageiro)) {
-                passageiro = new PassageiroEstudante(nome, idade);
-            } else {
-                passageiro = new PassageiroIdoso(nome, idade);
+                String escola = escolaPassageiroField.getText(); // Obtém o nome da escola
+                passageiro = new PassageiroEstudante(nome, idade, escola);
+            } else { // "Idoso"
+                String rg = rgPassageiroField.getText(); // Obtém o RG
+                passageiro = new PassageiroIdoso(nome, idade, rg);
             }
 
             Viagem viagem = (Viagem) viagemComboBox.getSelectedItem();
-            viagem.adicionarPassageiro(passageiro);
-            outputArea.append("Passageiro " + nome + " adicionado à viagem.\n");
+            if (viagem != null) {
+                viagem.adicionarPassageiro(passageiro);
+                outputArea.append("Passageiro " + nome + " adicionado à viagem.\n");
+            } else {
+                outputArea.append("Nenhuma viagem selecionada.\n");
+            }
 
         } catch (Exception e) {
             outputArea.append("Erro: " + e.getMessage() + "\n");
@@ -174,14 +259,22 @@ public class Main extends JFrame {
 
     private void calcularValorTotal() {
         Viagem viagem = (Viagem) viagemComboBox.getSelectedItem();
-        float valorTotal = viagem.getValorTotal();
-        outputArea.append("Valor total arrecadado: R$ " + valorTotal + "\n");
+        if (viagem != null) {
+            float valorTotal = viagem.getValorTotal();
+            outputArea.append("Valor total arrecadado: R$ " + valorTotal + "\n");
+        } else {
+            outputArea.append("Nenhuma viagem selecionada.\n");
+        }
     }
 
     private void listarPassageirosMaisIdosos() {
         List<Passageiro> passageirosMaisIdosos = empresa.getPassageirosMaisIdosos();
-        for (Passageiro passageiro : passageirosMaisIdosos) {
-            outputArea.append("Nome: " + passageiro.getNome() + ", Idade: " + passageiro.getIdade() + "\n");
+        if (passageirosMaisIdosos.isEmpty()) {
+            outputArea.append("Nenhum passageiro encontrado.\n");
+        } else {
+            for (Passageiro passageiro : passageirosMaisIdosos) {
+                outputArea.append("Nome: " + passageiro.getNome() + ", Idade: " + passageiro.getIdade() + "\n");
+            }
         }
     }
 

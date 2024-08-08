@@ -1,5 +1,6 @@
 package model.passageiro;
 
+//PEDRO HENRIQUE GODRI
 public abstract class Passageiro {
     private static final float TARIFA_INTEIRA = 5.00f;
     private String nome;
